@@ -59,7 +59,7 @@ Object.defineProperties(Array.prototype, {
 		}
 	}
 });
-
+/*
 var code =  "function test(foo) {\n" +
 			"\tswitch(foo) {\n" +
 			"\t\tcase 'hi':\n" +
@@ -71,12 +71,21 @@ var code =  "function test(foo) {\n" +
 			"\t}\n" +
 			"}\n" +
 			"test('hi');";
+*/
+function run(ast) {
+	if(typeof(ast) === 'string') ast = esprima.parse(ast);
 
-var ast = esprima.parse(code);
+	var globalScope = new Scope();
+	
+	return evalNode(ast, globalScope);
+}
 
-var globalScope = new Scope();
+exports.run = run;
 
 var types = {
+	Program: function(node, scope) {
+		return evalNodes(node.body, scope);
+	},
 	Literal: function(node, scope) {
 		return node.value;
 	},
@@ -309,8 +318,6 @@ function vals(ids) {
 	
 	return vars;
 }
-
-console.log('result:', evalNodes(ast.body, globalScope), 'global:', vals(globalScope.vars));
 
 function logger(node, scope) {
 	console.log('%s:', node.type, node);
