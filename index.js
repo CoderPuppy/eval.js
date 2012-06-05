@@ -1,5 +1,5 @@
-var objects = require('./objectStore'),
-	Scope = require('./scope'),
+var objects   = require('./objectStore'),
+	Scope     = require('./scope'),
 	Execution = require('./execution')
 
 var js = module.exports = {

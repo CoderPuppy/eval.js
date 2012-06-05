@@ -10,7 +10,7 @@ var Value = exports.Value = (function() {
 	}
 	
 	return (function() {
-		(function() {
+		;(function() {
 			this.duplicate = function duplicate() {
 				return Object.create(this.constructor.prototype, {
 					value: {
@@ -21,6 +21,8 @@ var Value = exports.Value = (function() {
 					}
 				})
 			}
+			
+			this.resolve = function resolve() { return this }
 		}).call(this.prototype)
 		
 		return this

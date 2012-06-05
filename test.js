@@ -1,4 +1,8 @@
 var js = require('./index')
 
-console.log('Result:', js.eval( "var hi = {}\n" +
-								"hi"))
+var result
+
+console.log('Result:', result = js.eval( "hi = { name: {first: 'drew'} }\n" +
+								"hi.name.last = 'young'\n" +
+								"hi.name").value.values)
+console.log('ObjectStore:', require('./objectStore').objects)

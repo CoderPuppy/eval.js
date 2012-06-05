@@ -1,6 +1,6 @@
 var objects = require('../objectStore'),
-	values = require('./index'),
-	util = require('util')
+	values  = require('./index'),
+	util    = require('util')
 
 var ReferenceValue = module.exports = (function() {
 	function ReferenceValue(val) {
@@ -9,7 +9,7 @@ var ReferenceValue = module.exports = (function() {
 	util.inherits(ReferenceValue, values.Value)
 	
 	return (function() {
-		(function() {
+		;(function() {
 			this.duplicate = function duplicate() {
 				return Object.create(ReferenceValue.prototype, {
 					id: {
@@ -20,6 +20,8 @@ var ReferenceValue = module.exports = (function() {
 					}
 				})
 			}
+			
+			this.resolve = function resolve() { return objects.objects[this.id] }
 		}).call(this.prototype)
 		
 		return this
