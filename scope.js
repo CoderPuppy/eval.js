@@ -1,38 +1,43 @@
-var inherits = require('./inherits');
-var events = require('events');
+var Property = require('./property')
 
-var Scope = module.exports = (function ScopeClass() {
+var Scope = module.exports = (function() {
 	function Scope(parent) {
-		this.vars = {};
-		this.parent = parent;
+		this.parent = parent
+		this.vars = {}
+		this.names = []
 	}
-	inherits(Scope, events.EventEmitter);
 	
-	Scope.prototype.get = function get(name) {
-		var id = this.vars[name];
+	return (function() {
+		this.load = function load(obj) { return new Scope().load(obj) };
 		
-		if(!(name in this.vars)) {
-			if(this.parent) {
-				id = this.parent.get(name);
-			} else {
-				throw new Error('Undefined Variable: ' + name, name);
+		(function() {
+			this.load = function load(obj) { return this }
+			
+			this.define = function define(name, init) {
+				if(this.defined(name)) console.warn('Redefining variable: %s', name)
+				else this.names.push(name)
+				
+				if(arguments.length > 1) this.set(name, init)
+				
+				return this
 			}
-		}
+			
+			this.defined = function defined(name) { return ~this.names.indexOf(name) }
+			
+			this.set = function set(name, val) {
+				val = new Property(name, val instanceof Property ? val.value : val)
+				
+				if(this.defined(name) || !this.parent) return this.vars[name] = val
+				else return this.parent.set(name, val)
+			}
+			
+			this.get = function get(name, need) {
+				if(this.defined(name)) return this.vars[name]
+				else if(this.parent) return this.parent.get(name, need)
+				else if(need) throw new Error('Undefined Variable: ' + name)
+			}
+		}).call(this.prototype)
 		
-		return id;
-	};
-	
-	Scope.prototype.set = function set(name, id) {
-		this.vars[name] = id;
-	};
-	
-	Scope.prototype.top = function top() {
-		var scope = this;
-		
-		while(scope.parent) scope = scope.parent;
-		
-		return scope;
-	};
-	
-	return Scope;
-})();
+		return this
+	}).call(Scope)
+})()
